@@ -40,8 +40,19 @@ Error: Deployment failed: Error: Status: 400. Code: InvalidParameterValue, Messa
 Error: Deployment failed: Error: Environment still has health Red 30 seconds after update finished!
 ```
 
+- eb deploy 옵션에 아래와 같은 코드를 추가하여 git actions까지 성공
+
+```
+wait_for_deployment: false
+wait_for_environment_recovery: 100
+```
+
 ## step 3
-- aws elastic beanstalk 배포
+### aws elastic beanstalk 배포
+- 배포는 되었으나 502 에러 발생
+- 배포까지는 연결이 잘 됐으나 elastic beanstalk의 nginx의 연결 기본 포트가 8080으로 잡혀있는걸 log 체크 후 확인
+- app의 port를 8080으로 변경하여 재배포 후 정상 작동 확인
 
 ## step 4
-- 도커 이미지 + git actions + elastic beanstalk 을 이용한 ci/cd 구현
+- git actions + elastic beanstalk 을 이용한 ci/cd 구현
+- 완료
