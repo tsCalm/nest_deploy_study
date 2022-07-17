@@ -14,8 +14,15 @@
 - .github/workflows 디렉토리에 .yml 파일을 생성하여 git actions 사용
 - git actions의 스텝을 build, deploy로 나눔
 - build의 결과물을 aws elastic beanstalk에 deploy하던 중 에러 발생
+
 ```
 Error: Deployment failed: No deployment package given but version 0031fc12e5ac8d8a3b3e24c34ecb9b6f314189b1 doesn't exist, so nothing to deploy!
+```
+
+- version_label의 값을 1로 고정 시키고 다시 시도했으나 아래와 같은 에러가 발생
+
+```
+Error: Deployment failed: No deployment package given but version 1 doesn't exist, so nothing to deploy!
 ```
 
 
