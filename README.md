@@ -34,6 +34,11 @@ Error: Deployment failed: Error: Status: 400. Code: InvalidParameterValue, Messa
 ```
 - 예상: aws의 elastic beanstalk을 생성하지 않아서 발생하는 오류
 - 환경 및 애플리케이션 생성 후 다시 시도
+- 또 다른 에러 발생 elastic beanstalk 연결은 확인
+
+```
+Error: Deployment failed: Error: Environment still has health Red 30 seconds after update finished!
+```
 
 ## step 3
 - aws elastic beanstalk 배포
