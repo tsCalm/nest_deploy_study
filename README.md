@@ -25,6 +25,15 @@ Error: Deployment failed: No deployment package given but version 0031fc12e5ac8d
 Error: Deployment failed: No deployment package given but version 1 doesn't exist, so nothing to deploy!
 ```
 
+- version_label 의 값을 되돌리고 새로운 옵션을 추가( deployment_package: deploy.zip )하여 에러 해결
+
+- 또 다른 에러 발생
+
+```
+Error: Deployment failed: Error: Status: 400. Code: InvalidParameterValue, Message: No Application named '***' found.
+```
+- 예상: aws의 elastic beanstalk을 생성하지 않아서 발생하는 오류
+- 환경 및 애플리케이션 생성 후 다시 시도
 
 ## step 3
 - aws elastic beanstalk 배포
