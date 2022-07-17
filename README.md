@@ -10,7 +10,14 @@
 - docker stop imageId 명령을 통한 도커 이미지 실행 중지
 
 ## step 2
-- git actions 연결
+### git actions 연결 
+- .github/workflows 디렉토리에 .yml 파일을 생성하여 git actions 사용
+- git actions의 스텝을 build, deploy로 나눔
+- build의 결과물을 aws elastic beanstalk에 deploy하던 중 에러 발생
+```
+Error: Deployment failed: No deployment package given but version 0031fc12e5ac8d8a3b3e24c34ecb9b6f314189b1 doesn't exist, so nothing to deploy!
+```
+
 
 ## step 3
 - aws elastic beanstalk 배포
