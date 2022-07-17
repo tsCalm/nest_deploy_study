@@ -86,7 +86,7 @@ jobs:
 
       # Make upload zip file
       - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*' './aws/*' './node_modules/*' './dist/*' awscliv2.zip
+        run: zip -r deploy.zip . -x '*.git*' './src/*' './aws/*' awscliv2.zip
 
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
