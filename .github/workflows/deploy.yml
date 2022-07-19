@@ -1,84 +1,15 @@
-name: Backend CI/CD
-
+#NAME
+name: Push images to Dockerhub and deploy on ELastic Beanstalk
+#EVENT
 on:
   push:
-    branches: [main]
-
+    branches:
+      - main
+#JOBS
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      # Download AWS CLI 2
-      - name: Install AWS CLI 2
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          which aws
-          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      # npm install for ci
-      - run: npm ci
-
-      # Build
-      - run: npm run build
-
-      # Unit test
-      # - run: npm run test:unit
-
   deploy:
-    name: BeanStalk Deploy
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.x']
-    needs: build
     steps:
-      - uses: actions/checkout@v2
-
-      # Initialize Node.js
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      # Install project dependencies
-      - name: Install dependencies
-        run: npm install
-
-      # Download AWS CLI 2
-      - name: Install AWS CLI 2
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          which aws
-          sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
       # Create .env file
       - name: Create env file
         run: |
@@ -91,13 +22,21 @@ jobs:
           echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env.prod
           cat .env.prod
 
-      # Build
-      - name: Run build
-        run: npm run build
+      - name: Checkout Latest repo
+        run: zip -r deploy.zip * -x "**node_modeules**"
 
-      # Make upload zip file
-      - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*' './src/*' './aws/*' awscliv2.zip
+      - name: Get Timestemp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run String Replace
+        uses: frabert/replace-string-action@master
+        id: format-time
+        with:
+          pattern: '[:\.]+'
+          string: '${{ steps.current-time.outputs.time }}'
+          replace-with: '-'
+          flags: 'g'
 
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
@@ -108,7 +47,7 @@ jobs:
           application_name: ${{ secrets.APPLICATION_NAME }}
           environment_name: ${{ secrets.ENVIRONMENT_NAME }}
           region: ${{ secrets.AWS_REGION }}
-          version_label: ${{github.SHA}}
+          version_label: '${{ steps.current-time.outputs.time }}'
           deployment_package: deploy.zip
           wait_for_deployment: false
           wait_for_environment_recovery: 100
