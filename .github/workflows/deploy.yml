@@ -80,15 +80,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       # Create .env file
-      - name: 'Create env file'
+      - name: Create env file
         run: |
           touch .env.prod
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env
-          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-          echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env.prod
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env.prod
+          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env.prod
+          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env.prod
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env.prod
+          echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env.prod
           cat .env.prod
 
       # Build
