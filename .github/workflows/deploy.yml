@@ -40,9 +40,10 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
           IMAGE_TAG: latest
         run: |
-          docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build . -t team-todo-dokcer
+          docker push team-todo-dokcer
+          echo "::set-output name=image::team-todo-dokcer"
+
       - name: Get current time
         uses: 1466587594/get-current-time@v2
         id: current-time
