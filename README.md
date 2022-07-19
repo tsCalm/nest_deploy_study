@@ -184,3 +184,7 @@ jobs:
           wait_for_environment_recovery: 100
 
 ```
+
+## docker 로 eb 배포 하기 전 ECR 권한 추가
+
+- AmazonEC2ContainerRegistryFullAccess
