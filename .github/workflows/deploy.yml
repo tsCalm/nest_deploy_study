@@ -22,21 +22,39 @@ jobs:
           echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env.prod
           cat .env.prod
 
-      - name: Checkout Latest repo
-        run: zip -r deploy.zip . -x './node_modeules'
-
-      - name: Get Timestemp
-        uses: gerred/actions/current-time@master
-        id: current-time
-
-      - name: Run String Replace
-        uses: frabert/replace-string-action@master
-        id: format-time
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          pattern: '[:\.]+'
-          string: '${{ steps.current-time.outputs.time }}'
-          replace-with: '-'
-          flags: 'g'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD_HH-mm-ss
+          utcOffset: '+09:00'
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp Dockerrun.aws.json deploy/Dockerrun.aws.json
+          cd deploy && zip -r deploy.zip .
 
       # Deploy to Elastic Beanstalk
       - name: Deploy to EB
@@ -48,6 +66,6 @@ jobs:
           environment_name: ${{ secrets.ENVIRONMENT_NAME }}
           region: ${{ secrets.AWS_REGION }}
           version_label: '${{ steps.current-time.outputs.time }}'
-          deployment_package: deploy.zip
+          deployment_package: deploy/deploy.zip
           wait_for_deployment: false
           wait_for_environment_recovery: 100
