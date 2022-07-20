@@ -18,8 +18,9 @@ jobs:
 
       - name: update Dockerrun.aws.json
         run: |
-          echo 'ls -a'
+          ls
           replacement= ${{ secrets.AWS_ECR_URL }}
+          cat replacement
           sed --expression "s@repo_url@$replacement@" Dockerrun.aws.json
           cat Dockerrun.aws.json
 
