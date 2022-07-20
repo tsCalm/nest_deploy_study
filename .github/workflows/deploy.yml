@@ -16,11 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: update Dockerrun.aws.json
-        run: |
-          ls
-          sed -i "s@repo_url@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
-          cat Dockerrun.aws.json
+      # - name: update Dockerrun.aws.json
+      #   run: |
+      #     ls
+      #     sed -i "s@repo_url@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
+      #     cat Dockerrun.aws.json
 
       # Create .env file
       - name: Create env file
@@ -48,10 +48,11 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: test
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
           IMAGE_TAG: latest
         run: |
+          cat $ECR_REGISTRY
           docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
