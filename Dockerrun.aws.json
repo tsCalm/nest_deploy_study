@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "Docker image url - ecr 레포지토리",
+    "Name": "repo_url",
     "Update": "true"
   },
   "Ports": [{ "ContainerPort": 8080 }]
