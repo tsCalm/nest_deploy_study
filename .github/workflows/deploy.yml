@@ -9,9 +9,9 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-      strategy:
-        matrix:
-          node-version: ['16.x']
+    strategy:
+      matrix:
+        node-version: ['16.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,7 +21,7 @@ jobs:
           echo 'ls -a'
           sed -i 's/repo_url/${{ secrets.AWS_ECR_URL }}/g' Dockerrun.aws.json
           cat Dockerrun.aws.json
-          
+
       # Create .env file
       - name: Create env file
         run: |
