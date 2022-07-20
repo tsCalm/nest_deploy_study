@@ -16,11 +16,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: update Dockerrun.aws.json
-      #   run: |
-      #     ls
-      #     sed -i "s@repo_url@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
-      #     cat Dockerrun.aws.json
+      - name: update Dockerrun.aws.json
+        run: |
+          sed -i "s@test@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
+          cat Dockerrun.aws.json
 
       # Create .env file
       - name: Create env file
