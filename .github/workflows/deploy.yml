@@ -16,12 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: update Dockerrun.aws.json
-        run: |
-          echo 'ls -a'
-          sed -i 's/repo_url/${{ secrets.AWS_ECR_URL }}/g' Dockerrun.aws.json
-          cat Dockerrun.aws.json
-
       # Create .env file
       - name: Create env file
         run: |
@@ -44,6 +38,13 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+
+      - name: update Dockerrun.aws.json
+        run: |
+          echo 'ls -a'
+          replacement= ${{ secrets.AWS_ECR_URL }}
+          sed --expression "s@repo_url@$replacement@" Dockerrun.aws.json
+          cat Dockerrun.aws.json
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
