@@ -1,8 +1,8 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "repo_url",
+    "Name": "test/team-todo-doker:latest",
     "Update": "true"
   },
-  "Ports": [{ "ContainerPort": 8080 }]
+  "Ports": [{ "hostPort": 8080, "containerPort": 8080 }]
 }
