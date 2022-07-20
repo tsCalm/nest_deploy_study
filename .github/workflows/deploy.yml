@@ -18,16 +18,8 @@ jobs:
 
       - name: update Dockerrun.aws.json
         run: |
-          echo "
-            {
-              'AWSEBDockerrunVersion': '1',
-              'Image': {
-                'Name': ${{ secrets.AWS_ECR_URL }},
-                'Update': 'true'
-              },
-              'Ports': [{ 'ContainerPort': 8080 }]
-            }
-          " > Dockerrun.aws.json
+          ls
+          sed --expression "s@repo_url@${{ secrets.AWS_ECR_URL }}@" Dockerrun.aws.json > Dockerrun.aws.json
           cat Dockerrun.aws.json
 
       # Create .env file
