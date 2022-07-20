@@ -19,9 +19,7 @@ jobs:
       - name: update Dockerrun.aws.json
         run: |
           ls
-          replacement= ${{ secrets.AWS_ECR_URL }}
-          cat replacement
-          sed --expression "s@repo_url@$replacement@" Dockerrun.aws.json
+          sed --expression "s@repo_url@${{ secrets.AWS_ECR_URL }}@" Dockerrun.aws.json
           cat Dockerrun.aws.json
 
       # Create .env file
