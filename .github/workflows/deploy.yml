@@ -43,16 +43,6 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
           IMAGE_TAG: latest
         run: |
-          pwd
-          echo `ls -l`
-          cd .. 
-          echo `ls -l`
-          cd .. 
-          echo `ls -l`
-          cd .. 
-          echo `ls -l`
-          cd .. 
-          echo `ls -l`
           docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
