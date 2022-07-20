@@ -188,3 +188,37 @@ jobs:
 ## docker 로 eb 배포 하기 전 ECR 권한 추가
 
 - AmazonEC2ContainerRegistryFullAccess
+
+- ecr 퍼미션 설정 (json 편집)
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "GetAuthorizationToken",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::{aws-owner-id}:user/{iam-user}"
+      },
+      "Action": "ecr:GetAuthorizationToken"
+    },
+    {
+      "Sid": "AllowPushAndPull",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::{aws-owner-id}:user/{iam-user}"
+      },
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:BatchGetImage",
+        "ecr:CompleteLayerUpload",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:InitiateLayerUpload",
+        "ecr:PutImage",
+        "ecr:UploadLayerPart"
+      ]
+    }
+  ]
+}
+```
