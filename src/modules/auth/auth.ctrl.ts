@@ -10,22 +10,22 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.sv';
 import { LoginInput } from './auth.dto';
-// import { LocalAuthGuard } from './localAuth.guard';
+import { LocalAuthGuard } from './local.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(protected readonly authService: AuthService) {}
 
   @Get('test')
-  // @UseGuards(LocalAuthGuard)
+  @UseGuards(LocalAuthGuard)
   async test(@Req() req) {
     return 'test';
   }
 
-  // @Post('login')
-  // async login(@Body() loginInput: LoginInput) {
-  //   return await this.authService.login(loginInput);
-  // }
+  @Post('login')
+  async login(@Body() loginInput: LoginInput) {
+    return await this.authService.login(loginInput);
+  }
 
   // // login을 하지 않고 프론트엔드에서 apiKey 값으로 토큰값을 얻음
   // @Get('get-token')
