@@ -1,4 +1,4 @@
-import { User } from '../modules/user/user.entity';
+import { User } from '../modules/user/user.et';
 import { DataSource, EntityManager } from 'typeorm';
 
 import { passwordHash } from '../modules/utils/hash';
@@ -12,7 +12,7 @@ export const defaultUser = async () => {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: [join(__dirname, '../modules/**/*.entity.js')],
+    entities: [join(__dirname, '../modules/**/*.et.js')],
   });
   let connection = await datasource.initialize();
 
