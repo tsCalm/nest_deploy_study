@@ -14,9 +14,9 @@ class TypeOrmConfig {
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_NAME'),
-      entities: [join(__dirname, '../**/*.entity.js')],
+      entities: [join(__dirname, '../**/*.entity.ts')],
       synchronize: true,
-      logging: false,
+      logging: true,
       autoLoadEntities: true,
     };
   }

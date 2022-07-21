@@ -223,4 +223,4 @@ jobs:
 }
 ```
 
-- iam 페이지에서 역할 클릭 후 aws-elasticbeanstalk-ec2-role 검색하여 역할 추가 -> erc readonly 권한 추가 후 다시 시도
+- iam 페이지에서 역할 클릭 후 aws-elasticbeanstalk-ec2-role 검색하여 역할 추가 -> erc power user 권한 추가 후 다시 시도
