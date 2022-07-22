@@ -10,14 +10,14 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.sv';
 import { LoginInput } from './auth.dto';
-import { LocalAuthGuard } from './local.guard';
+import { JwtAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(protected readonly authService: AuthService) {}
 
   @Get('test')
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async test(@Req() req) {
     return 'test';
   }

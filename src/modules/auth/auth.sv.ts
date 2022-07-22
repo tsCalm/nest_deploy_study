@@ -26,6 +26,7 @@ export class AuthService {
       );
       return token;
     } catch (err) {
+      console.log('auth.service generateJwtTokens error : ', err.message);
       throw new Error(err.message);
       // throw new IError(HttpStatus.BAD_REQUEST, err.message);
     }
@@ -62,7 +63,6 @@ export class AuthService {
     } catch (err) {
       console.log(err.message);
       return null;
-      // return new IError(HttpStatus.BAD_REQUEST, err.message);
     }
   };
 }
