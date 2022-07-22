@@ -1,82 +1,107 @@
-#NAME
-name: Push images to Dockerhub and deploy on ELastic Beanstalk
-#EVENT
+# #NAME
+# name: Push images to Dockerhub and deploy on ELastic Beanstalk
+# #EVENT
+# on:
+#   push:
+#     branches:
+#       - main
+# #JOBS
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         node-version: ['16.x']
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
+
+#       - name: update Dockerrun.aws.json
+#         run: |
+#           sed -i "s@test@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
+#           cat Dockerrun.aws.json
+
+#       # Create .env file
+#       - name: Create env file
+#         run: |
+#           touch .env.prod
+#           echo DB_HOST=${{ secrets.DB_HOST }} >> .env.prod
+#           echo DB_PORT=${{ secrets.DB_PORT }} >> .env.prod
+#           echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env.prod
+#           echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env.prod
+#           echo DB_NAME=${{ secrets.DB_NAME }} >> .env.prod
+#           echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env.prod
+#           cat .env.prod
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ap-northeast-2
+
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
+
+#       - name: Build, tag, and push image to Amazon ECR
+#         id: build-image
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
+#           IMAGE_TAG: latest
+#         run: |
+#           docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#       - name: Get current time
+#         uses: 1466587594/get-current-time@v2
+#         id: current-time
+#         with:
+#           format: YYYYMMDD_HH-mm-ss
+#           utcOffset: '+09:00'
+
+#       - name: Generate deployment package
+#         run: |
+#           mkdir -p deploy
+#           cp Dockerrun.aws.json deploy/Dockerrun.aws.json
+#           cd deploy && zip -r deploy.zip .
+
+#       # Deploy to Elastic Beanstalk
+#       - name: Deploy to EB
+#         uses: einaregilsson/beanstalk-deploy@v18
+#         with:
+#           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           application_name: ${{ secrets.APPLICATION_NAME }}
+#           environment_name: ${{ secrets.ENVIRONMENT_NAME }}
+#           region: ${{ secrets.AWS_REGION }}
+#           version_label: '${{ steps.current-time.outputs.time }}'
+#           deployment_package: deploy/deploy.zip
+#           wait_for_deployment: false
+#           wait_for_environment_recovery: 100
+
+name: Backend CI/CD
+
 on:
   push:
-    branches:
-      - main
-#JOBS
+    branches: [main]
+
 jobs:
-  deploy:
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.x']
+        node-version: [16.x]
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: update Dockerrun.aws.json
-        run: |
-          sed -i "s@test@${{ secrets.AWS_ECR_URL }}@g" Dockerrun.aws.json
-          cat Dockerrun.aws.json
-
-      # Create .env file
-      - name: Create env file
-        run: |
-          touch .env.prod
-          echo DB_HOST=${{ secrets.DB_HOST }} >> .env.prod
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env.prod
-          echo DB_USERNAME=${{ secrets.DB_USERNAME }} >> .env.prod
-          echo DB_PASSWORD=${{ secrets.DB_PASSWORD }} >> .env.prod
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env.prod
-          echo JWT_ACCESS_TOKEN_SECRET=${{ secrets.JWT_ACCESS_TOKEN_SECRET }} >> .env.prod
-          cat .env.prod
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO }}
-          IMAGE_TAG: latest
-        run: |
-          docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Get current time
-        uses: 1466587594/get-current-time@v2
-        id: current-time
-        with:
-          format: YYYYMMDD_HH-mm-ss
-          utcOffset: '+09:00'
-
-      - name: Generate deployment package
-        run: |
-          mkdir -p deploy
-          cp Dockerrun.aws.json deploy/Dockerrun.aws.json
-          cd deploy && zip -r deploy.zip .
-
-      # Deploy to Elastic Beanstalk
-      - name: Deploy to EB
-        uses: einaregilsson/beanstalk-deploy@v18
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ${{ secrets.APPLICATION_NAME }}
-          environment_name: ${{ secrets.ENVIRONMENT_NAME }}
-          region: ${{ secrets.AWS_REGION }}
-          version_label: '${{ steps.current-time.outputs.time }}'
-          deployment_package: deploy/deploy.zip
-          wait_for_deployment: false
-          wait_for_environment_recovery: 100
+      # Unit test
+      - run: npm run test
