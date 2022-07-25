@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { BaseEntity } from '../common/base-entity';
 import { Project } from '../project/project.et';
+import { Tag } from '../tag/tag.et';
 import { CardTypeEnum } from './card.type';
 
 @Entity()
@@ -34,4 +35,7 @@ export class Card extends BaseEntity {
   //   select: false,
   // })
   // password: string;
+
+  @OneToMany(() => Tag, (tag) => tag.card)
+  tags: Tag[];
 }

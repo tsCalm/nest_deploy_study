@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ProjectService } from './project.sv';
+import { ProjectInput } from './project.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -11,7 +12,7 @@ export class ProjectController {
   }
 
   @Post('')
-  async create(@Body('title') title: string) {
-    return await this.projectService.create(title);
+  async create(@Body() projectInput: ProjectInput) {
+    return await this.projectService.create(projectInput);
   }
 }

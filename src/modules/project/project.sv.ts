@@ -11,12 +11,15 @@ import { IResObj } from '../common/response-class';
 import { IResObjList } from '../common/response-class';
 import { IResType } from '../common/response-type';
 import { BaseService } from '../common/base-service';
+import { ProjectInput } from './project.dto';
+import { UserService } from '../user/user.sv';
 
 @Injectable()
 export class ProjectService extends BaseService<Project> {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    private readonly userService: UserService,
   ) {
     super();
   }
@@ -32,11 +35,16 @@ export class ProjectService extends BaseService<Project> {
     }
   }
 
-  async create(title: string): Promise<IResType> {
+  async create(projectInput: ProjectInput): Promise<IResType> {
     try {
-      const result = await this.projectRepository.save({
-        title,
-      });
+      const users = await this.userService.findByIds(projectInput.userIds);
+      delete projectInput.userIds;
+      const inputData = {
+        ...projectInput,
+        users,
+      };
+      console.log('inputData : ', inputData);
+      const result = await this.projectRepository.save(inputData);
       return this.resObj(result);
     } catch (err) {
       console.log('project.service create error : ', err.message);

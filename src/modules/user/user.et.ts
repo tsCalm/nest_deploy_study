@@ -4,10 +4,12 @@ import {
   Column,
   Entity,
   Generated,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { BaseEntity } from '../common/base-entity';
+import { Project } from '../project/project.et';
 import { passwordHash } from '../utils/hash';
 
 @Entity()
@@ -32,6 +34,9 @@ export class User extends BaseEntity {
     select: false,
   })
   password: string;
+
+  @ManyToMany(() => Project, (project) => project.users)
+  projects: Project[];
 
   @BeforeInsert()
   @BeforeUpdate()

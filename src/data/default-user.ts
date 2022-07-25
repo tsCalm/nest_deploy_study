@@ -27,13 +27,17 @@ export const defaultUser = async () => {
       {
         email: process.env.USER_3_EMAIL,
       },
+      {
+        email: process.env.USER_4_EMAIL,
+      },
     ],
   });
   if (users.length === 0) {
     const createUserList = [];
     const salt = 10;
-    for (let i = 1; i < 4; i++) {
+    for (let i = 1; i < 5; i++) {
       const user = {
+        id: i,
         name: process.env[`USER_${i}_NAME`],
         email: process.env[`USER_${i}_EMAIL`],
         position: process.env[`USER_${i}_POSITION`],

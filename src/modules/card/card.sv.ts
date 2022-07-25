@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { BaseService } from '../common/base-service';
 import { IResType } from '../common/response-type';
 import { Card } from './card.et';
@@ -39,6 +39,41 @@ export class CardService extends BaseService<Card> {
       return this.resObj(result);
     } catch (err) {
       console.log('card.service create error : ', err.message);
+      return this.resError(err.message);
+    }
+  }
+  async search(projectId: number, keyword: string) {
+    try {
+      const result = await this.CardRepository.find({
+        where: [
+          {
+            title: Like(`%${keyword}%`),
+            projectId,
+          },
+          {
+            content: Like(`%${keyword}%`),
+            projectId,
+          },
+        ],
+      });
+      console.log('result : ', result);
+      return this.resList(result);
+    } catch (err) {
+      console.log('card.service search error :', err.message);
+      return this.resError(err.message);
+    }
+  }
+  async delete(projectId: number, id: number) {
+    try {
+      await this.CardRepository.delete(id);
+      const result = await this.CardRepository.find({
+        where: {
+          projectId,
+        },
+      });
+      return this.resList(result);
+    } catch (err) {
+      console.log('card.service search error :', err.message);
       return this.resError(err.message);
     }
   }

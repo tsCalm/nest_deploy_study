@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Response } from 'express';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../user/user.et';
 
 @Injectable()
@@ -26,5 +26,13 @@ export class UserService {
     } catch (err) {
       throw new Error(err.message);
     }
+  }
+
+  async findByIds(userIds: number[]) {
+    return await this.userRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
   }
 }
