@@ -19,4 +19,8 @@ export class CardInput {
   @IsDefined()
   @IsString()
   content: string;
+
+  @IsDefined()
+  @IsString()
+  end_date: string;
 }
